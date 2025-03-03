@@ -10,9 +10,9 @@ BUILD_FILES   = $(wildcard build/*.o)
 
 # MY_LIBS = My_logging_system/log_lib.a Stack/my_stack_lib.a
 
-all: akinator.out
+all: patcher.out
 
-akinator.out:$(SRC_FILES) $(BUILD_FILES)
+patcher.out:$(SRC_FILES) $(BUILD_FILES)
 	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) -o patcher.out
 
 library:
