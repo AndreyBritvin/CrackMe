@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "patcher.h"
 
+// TODO: redo type
 err_code_t patch(char *filename)
 {
     assert(filename);
@@ -21,25 +22,30 @@ err_code_t patch(char *filename)
     hash_t file_hash = hash(bin_code, filesize);
     printf("Hash of this code is %lld\n", file_hash);
 
+    err_code_t ret_code = OK;
+
     if (file_hash == original_hash)
     {
         printf("Well, now Im gonna crack all your files...\n");
         bin_code[0x1f] = 0xEB;
         fwrite(bin_code, sizeof(char), filesize, to_crack);
+        ret_code = PATCHED;
     }
     else if (file_hash == modified_hash)
     {
         printf("This file has been already patched\n");
+        ret_code = ALREADY_PATCHED;
     }
     else
     {
         printf("This is not file that I need to crack\n");
+        ret_code = WRONG_FILE;
     }
 
     free(bin_code);
     fclose(to_crack);
 
-    return EXIT_SUCCESS;
+    return ret_code;
 }
 
 hash_t hash(void *void_arr_to_hash, size_t arr_size)

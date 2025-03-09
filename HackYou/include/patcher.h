@@ -3,11 +3,14 @@
 
 #include "utils.h"
 #include "stdlib.h"
+
 typedef unsigned long long hash_t;
 typedef char byte;
 
-static hash_t original_hash = 8758719067478870283;
-static hash_t modified_hash =  758545229006759617;
+static hash_t original_hash = -7977139799940870391;
+static hash_t modified_hash = -8804680756655524609;
+
+typedef err_code_t (*patcher_t)(char *);
 
 hash_t hash(void *void_arr_to_hash, size_t arr_size);
 err_code_t patch(char *filename);

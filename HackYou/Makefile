@@ -13,7 +13,7 @@ BUILD_FILES   = $(wildcard build/*.o)
 all: patcher.out
 
 patcher.out:$(SRC_FILES) $(BUILD_FILES)
-	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) -o patcher.out
+	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) -o patcher.out -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 
 library:
 	@$(CC) $(CFLAGS) -c $(INCLUDE) $(SRC_FILES) My_logging_system/log_lib.a -o $(BUILD_FILES)
