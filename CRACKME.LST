@@ -1,0 +1,154 @@
+Turbo Assembler	 Version 4.1	    02/28/25 22:34:37	    Page 1
+crackme.asm
+
+
+
+      1	0000			     .model tiny
+      2	0000			     .code
+      3				     org 100h
+      4				     locals @@
+      5	      =0031		     GRANTED equ '1'
+      6	0100			     Start:
+      7	0100  BA 010Fr			     mov dx, offset HelloStr	     ; dx = &MyStr
+      8	0103  B4 09			     mov ah, 09h			     ; ah = 09h
+      9	0105  CD 21			     int 21h				     ; DOS Fn 09h = puts(dx) puts(HelloStr)
+     10
+     11	0107  E8 007D			 call INPUT_PASSWORD
+     12
+     13	010A  B8 4C00			     mov ax, 4c00h			 ; ax =	4c00h
+     14	010D  CD 21			     int 21h				     ; DOS Fn 4ch = exit(al)
+     15
+     16	010F  48 65 6C 6C 6F 2C	20+  HelloStr	 : db "Hello, please enter password. Be	careful. Wrong password	will delete all	your+
+     17	      70 6C 65 61 73 65	20+  data...:$"
+     18	      65 6E 74 65 72 20	70+
+     19	      61 73 73 77 6F 72	64+
+     20	      2E 20 42 65 20 63	61+
+     21	      72 65 66 75 6C 2E	20+
+     22	      57 72 6F 6E 67 20	70+
+     23	      61 73 73 77 6F 72	64+
+     24	      20 77 69 6C 6C 20	64+
+     25	      65 6C 65 74 65 20	61+
+     26	      6C 6C 20 79 6F 75	72+
+     27	      20 64 61 74 61 2E	2E+
+     28	      2E 3A 24
+     29	0166  59 45 45 53 45 53	45+  AccessStr	 : db "YEESESESESESES$"
+     30	      53 45 53 45 53 45	53+
+     31	      24
+     32	0175  50 6C 61 6B 69 2D	70+  DenyStr	 : db "Plaki-plaki$"
+     33	      6C 61 6B 69 24
+     34	0181  71 77 65 72 74 79	     PWD	 : db "qwerty"
+     35
+     36	0187			     INPUT_PASSWORD proc
+     37	0187  55			 push bp
+     38	0188  83 EC 11			 sub sp, 17
+     39	018B  8B EC			 mov bp, sp
+     40	018D  8B FD			 mov di, bp
+     41	018F  B4 01			 mov ah, 01
+     42	0191  C6 46 10 24		 mov byte ptr [bp + 16], '$'
+     43	0195			     @@GET_CHAR:
+     44	0195  CD 21			 int 21h
+     45	0197  3C 0D			 cmp al, 0Dh
+     46	0199  74 03			 je @@END_GETS
+     47	019B  AA			 stosb
+     48	019C  EB F7			 jmp @@GET_CHAR
+     49
+     50	019E			     @@END_GETS:
+     51	019E  80 7E 10 31		 cmp byte ptr [bp + 16], GRANTED     ; only noobs place	check before strcmp
+     52	01A2  74 1D			 je @@YES
+     53
+     54	01A4  8B FD			 mov di, bp
+     55	01A6  BE 0181r			 mov si, offset	PWD
+     56	01A9  B9 0006			 mov cx, 6
+     57	01AC  F3> A6			 rep cmpsb
+Turbo Assembler	 Version 4.1	    02/28/25 22:34:37	    Page 2
+crackme.asm
+
+
+
+     58
+     59
+     60	01AE  75 07			 jne @@DENY_ACCESS
+     61	01B0  C6 46 10 31		 mov byte ptr [bp + 16], GRANTED
+     62	01B4  EB 05 90			 jmp @@END_1
+     63	01B7				 @@DENY_ACCESS:
+     64	01B7  C6 46 10 00		 mov byte ptr [bp + 16], 0
+     65	01BB				 @@END_1:
+     66
+     67	01BB  80 7E 10 31		 cmp byte ptr [bp + 16], GRANTED
+     68	01BF  75 06			 jne @@NO
+     69	01C1				 @@YES:
+     70	01C1  E8 000B			 call ACCESS_GRANTED
+     71	01C4  EB 04 90			 jmp @@END
+     72	01C7				 @@NO:
+     73	01C7  E8 000D			 call ACCESS_DENIED
+     74	01CA				 @@END:
+     75
+     76	01CA  83 C4 11			 add sp, 17
+     77	01CD  5D			 pop bp
+     78	01CE  C3			 ret
+     79	01CF				 endp
+     80
+     81	01CF			     ACCESS_GRANTED proc
+     82	01CF  BA 0166r			 mov dx, offset	AccessStr
+     83	01D2  B4 09			     mov ah, 09h			     ; ah = 09h
+     84	01D4  CD 21			     int 21h				     ; DOS Fn 09h = puts(dx)
+     85	01D6  C3			 ret
+     86	01D7				 endp
+     87
+     88	01D7			     ACCESS_DENIED proc
+     89	01D7  BA 0175r			 mov dx, offset	DenyStr
+     90	01DA  B4 09			     mov ah, 09h			     ; ah = 09h
+     91	01DC  CD 21			     int 21h				     ; DOS Fn 09h = puts(dx)
+     92	01DE  C3			 ret
+     93	01DF				 endp
+     94
+     95	01DF			     buffer:
+     96				     end Start
+Turbo Assembler	 Version 4.1	    02/28/25 22:34:37	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/28/25"
+??FILENAME			  Text	 "crackme "
+??TIME				  Text	 "22:34:37"
+??VERSION			  Number 040A
+@32BIT				  Text	 0
+@@DENY_ACCESS			  Near	 DGROUP:01B7
+@@END				  Near	 DGROUP:01CA
+@@END_1				  Near	 DGROUP:01BB
+@@END_GETS			  Near	 DGROUP:019E
+@@GET_CHAR			  Near	 DGROUP:0195
+@@NO				  Near	 DGROUP:01C7
+@@YES				  Near	 DGROUP:01C1
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 CRACKME
+@INTERFACE			  Text	 000H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ACCESSSTR			  Near	 DGROUP:0166
+ACCESS_DENIED			  Near	 DGROUP:01D7
+ACCESS_GRANTED			  Near	 DGROUP:01CF
+BUFFER				  Near	 DGROUP:01DF
+DENYSTR				  Near	 DGROUP:0175
+GRANTED				  Number 0031
+HELLOSTR			  Near	 DGROUP:010F
+INPUT_PASSWORD			  Near	 DGROUP:0187
+PWD				  Near	 DGROUP:0181
+START				  Near	 DGROUP:0100
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+  _TEXT				  16  01DF Word	  Public  CODE
+
